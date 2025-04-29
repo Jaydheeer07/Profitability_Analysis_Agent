@@ -47,3 +47,4 @@ test_files/
 prompt.txt
 profit_loss_analysis.json
 .windsurfrules
+tests/

@@ -164,50 +164,50 @@ Generate human-readable insights:
 - Priority scoring for most relevant insights
 - Recommendation generation with expected impact
 
-### 3.4 Phase 4: Dashboard Development
+### 3.4 Phase 4: Streamlit Dashboard Development
 
 #### 3.4.1 Core Visualization Components
-Implement key dashboard elements:
+Implement key dashboard elements using Streamlit and Plotly/Altair:
 
-- KPI cards (Gross Profit Margin, Net Profit Margin, Expense Ratio)
-- Profit breakdown chart (waterfall or bar chart)
-- Top expenses visualization (pie or treemap)
-- Time-series performance chart
-- Detailed financial data table
+- KPI metrics display with st.metric components
+- Profit breakdown chart (bar chart with Plotly)
+- Top expenses visualization (pie chart or treemap with Plotly)
+- Time-series performance chart (line chart with Altair)
+- Detailed financial data table with st.dataframe
 
 #### 3.4.2 Interactivity Features
-Enhance user experience:
+Leverage Streamlit's built-in widgets for interactivity:
 
-- Company/period selector
-- Drill-down capabilities
-- Interactive filters
-- Expandable sections for detailed data
+- Company/period selector with st.selectbox
+- Expandable sections with st.expander
+- Interactive filters with st.sidebar widgets
+- Tabs for different analysis views with st.tabs
 
-#### 3.4.3 Responsive Design
-Ensure optimal viewing across devices:
+#### 3.4.3 Deployment & Sharing
+Streamline deployment and sharing:
 
-- Desktop optimization
-- Tablet compatibility
-- Mobile-friendly views
+- One-click deployment to Streamlit Cloud
+- Shareable links for stakeholders
+- Password protection for sensitive data
+- Responsive design that works across devices
 
 ## 4. Technology Stack
 
 ### 4.1 Backend
-- **Language**: Python/Node.js
-- **Frameworks**: FastAPI/Express.js
-- **Data Processing**: Pandas/NumPy (Python) or data-forge (JavaScript)
-- **ML Libraries**: Scikit-learn, TensorFlow (optional)
-- **NLG**: GPT API integration for insight generation
+- **Language**: Python
+- **Data Processing**: Pandas/NumPy
+- **ML Libraries**: Scikit-learn (optional)
+- **NLG**: GPT API integration for insight generation (optional)
 
-### 4.2 Frontend
-- **Framework**: React with TypeScript
-- **Visualization**: Recharts, D3.js
-- **Styling**: Tailwind CSS
-- **State Management**: Redux or Context API
+### 4.2 Frontend & Application Framework
+- **Framework**: Streamlit
+- **Visualization**: Plotly, Altair, Streamlit native charts
+- **Styling**: Streamlit themes and custom CSS
+- **Deployment**: Streamlit Cloud for easy sharing
 
 ### 4.3 Data Storage
-- **Database**: MongoDB (flexible schema for varying report structures)
-- **Caching**: Redis (for performance optimization)
+- **Local Storage**: JSON files for MVP
+- **Future Options**: SQLite or PostgreSQL for more complex data needs
 
 ## 5. Integration Points
 
@@ -255,17 +255,81 @@ Ensure optimal viewing across devices:
 - Validate insights with financial experts
 - Ensure dashboard usability
 
-## 8. Minimum Viable Product (MVP)
+## 8. Current Implementation Status
+
+### 8.1 Implemented Features
+
+We have successfully implemented the core data processing module with the following features:
+
+1. **Excel Parser (analyze_profit_loss.py)**
+   - Parses profit and loss Excel files from Xero
+   - Extracts company name, period, and basis type
+   - Identifies all sections (Trading Income, Cost of Sales, Gross Profit, Operating Expenses, Net Profit)
+   - Extracts account names, codes, and values for each section
+   - Calculates section totals with fallback mechanisms
+   - Handles both complete and partial reports
+   - Outputs standardized JSON structure for further processing
+
+2. **Main Application (main.py)**
+   - Entry point for the application
+   - Handles file paths and execution flow
+   - Saves processed data to JSON format
+
+### 8.2 Prioritized Improvements
+
+Based on the current implementation, these are the prioritized improvements in order of importance:
+
+1. **Add Category Classification** (HIGH)
+   - Group accounts into meaningful categories (e.g., "Sales", "Marketing", "Administrative")
+   - Implement a classification system based on account names and codes
+   - Add category field to the account objects in the JSON output
+
+2. **Add Financial Ratios** (HIGH)
+   - Calculate key financial ratios (gross profit margin, net profit margin, etc.)
+   - Add a new "metrics" section to the JSON output
+   - Implement comparison with industry benchmarks when available
+
+3. **Add Time Series Support** (MEDIUM)
+   - Process multiple periods and track changes over time
+   - Implement period-over-period comparisons
+   - Add trend analysis for key metrics
+
+4. **Implement Data Validation** (MEDIUM)
+   - Add robust error handling for malformed Excel files
+   - Validate unusual or outlier values
+   - Provide detailed error messages for troubleshooting
+
+5. **Add Visualization Functions** (MEDIUM)
+   - Generate basic charts directly from the processed data
+   - Implement functions for common financial visualizations
+   - Create a simple dashboard template
+
+6. **Create a Configuration File** (LOW)
+   - Allow customization of section names, keywords, and thresholds
+   - Support different financial report formats
+   - Enable user-defined classification rules
+
+7. **Implement Batch Processing** (LOW)
+   - Process multiple Excel files in a directory
+   - Support analysis across different periods or entities
+   - Enable consolidated reporting
+
+8. **Add Export Options** (LOW)
+   - Support exporting to formats beyond JSON (CSV, Excel, etc.)
+   - Implement report generation functionality
+   - Add options to customize the output structure
+
+## 9. Minimum Viable Product (MVP)
 
 For the initial release, focus on:
 
-1. Basic parsing of Xero P&L reports (both formats)
-2. Core financial metrics calculation
-3. Simple rule-based insights
-4. Basic interactive dashboard with key visualizations
-5. Manual data upload functionality
+1. Basic parsing of Xero P&L reports (both formats) ✅
+2. Core financial metrics calculation (partially implemented) ⏳
+3. Account categorization system ⏳
+4. Streamlit dashboard with key visualizations
+5. File upload functionality via Streamlit interface
 
-## 9. Future Enhancements
+## 10. Future Enhancements
 
 After MVP completion, consider:
 
@@ -273,33 +337,90 @@ After MVP completion, consider:
 2. Advanced ML-based insights
 3. Industry benchmarking
 4. Forecasting and scenario modeling
-5. Mobile application
+5. Enhanced Streamlit components with custom widgets
 6. Multi-company consolidated analysis
+7. AI-powered recommendations for cost optimization
+8. Cash flow projection based on P&L trends
+9. Database integration for persistent storage
 
-## 10. Implementation Timeline
+## 11. Implementation Timeline
 
-| Phase | Description | Duration |
-|-------|-------------|----------|
-| 1 | Core Data Processing | 3 weeks |
-| 2 | Analytics Engine | 2 weeks |
-| 3 | AI Insights Generator | 3 weeks |
-| 4 | Dashboard Development | 4 weeks |
-| 5 | Testing and Refinement | 2 weeks |
-| 6 | MVP Launch | 1 week |
+| Phase | Description | Status | Duration |
+|-------|-------------|--------|----------|
+| 1 | Core Data Processing | In Progress | 3 weeks |
+| 1.1 | Excel Parser Implementation | Completed | 1 week |
+| 1.2 | Account Categorization | Not Started | 1 week |
+| 1.3 | Financial Metrics Calculation | Not Started | 1 week |
+| 2 | Analytics Engine | Not Started | 2 weeks |
+| 3 | AI Insights Generator | Not Started | 2 weeks |
+| 4 | Streamlit Dashboard Development | Not Started | 2 weeks |
+| 5 | Testing and Refinement | Not Started | 1 week |
+| 6 | MVP Launch & Streamlit Deployment | Not Started | 1 day |
 
-Total estimated timeline: 15 weeks
+Total estimated timeline: 10 weeks (reduced from 15 weeks due to Streamlit adoption)
 
-## 11. Resource Requirements
+## 12. Resource Requirements
 
-- 1-2 Backend developers
-- 1 Frontend developer
-- 1 Data scientist (for advanced insights)
-- 1 UX/UI designer
-- QA resource for testing
+- 1-2 Python developers (with Pandas expertise)
+- 1 Data analyst/scientist (for insights and visualizations)
+- 1 QA resource for testing
 
-## 12. Key Success Metrics
+*Note: Using Streamlit reduces the need for separate frontend developers and UX/UI designers*
+
+## 13. Key Success Metrics
 
 - Successful parsing of >95% of Xero P&L report formats
 - Insight generation accuracy >90% (validated by financial experts)
 - Dashboard rendering time <2 seconds
 - User satisfaction rating >4/5
+
+## 14. Development Standards
+
+In accordance with our project rules, we follow these development standards:
+
+### 14.1 Code Structure & Modularity
+- Files should not exceed 500 lines of code
+- Code is organized into clearly separated modules by feature/responsibility
+- Use clear, consistent imports (prefer relative imports within packages)
+
+### 14.2 Project Structure
+
+The project follows a modular structure:
+
+```
+profitability_analysis_agent/
+├── src/                      # Source code directory
+│   ├── core/                 # Core analysis functionality
+│   │   ├── analyzer.py       # Main analysis logic
+│   │   └── models/           # Data models (future use)
+│   ├── dashboard/            # Dashboard components
+│   │   ├── app.py            # Streamlit dashboard entry point
+│   │   ├── utils.py          # Dashboard utility functions
+│   │   ├── components/       # UI components
+│   │   │   └── ui.py         # Reusable UI elements
+│   │   └── visualizations/   # Chart creation
+│   │       └── charts.py     # Visualization functions
+│   └── utils/                # Common utilities
+│       └── helpers.py        # Shared helper functions
+├── tests/                    # Test directory
+│   └── ...                   # Test files
+├── test_files/               # Sample files for testing
+│   └── ...                   # Test Excel files
+├── app.py                    # Unified entry point
+├── requirements.txt          # Project dependencies
+├── README.md                 # Project documentation
+├── PLANNING.md               # Implementation plan
+└── TASK.md                   # Task tracking
+```
+
+### 14.3 Testing & Reliability
+- All new features require Pytest unit tests
+- Tests should include expected use, edge case, and failure case scenarios
+- Tests should mirror the main app structure in a `/tests` folder
+
+### 14.4 Documentation & Style
+- Follow PEP8 standards and use type hints
+- Format code with `black`
+- Use `pydantic` for data validation
+- Write Google-style docstrings for all functions
+- Comment non-obvious code with explanations
