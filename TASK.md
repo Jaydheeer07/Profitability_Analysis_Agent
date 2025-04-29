@@ -22,10 +22,6 @@
   - Test total calculation mechanisms
   - Test edge cases (missing sections, zero values, incorrect totals)
 
-## In Progress Tasks
-
-## Completed Tasks (continued)
-
 - [x] **2025-04-28**: Implement Streamlit dashboard
   - Created file upload interface for Excel files
   - Implemented financial metrics and KPIs calculation
@@ -43,15 +39,17 @@
   - Updated documentation to reflect new structure
   - Improved imports and package organization
 
+- [x] **2025-04-29**: Add account categorization system
+  - Created category mapping based on account names and codes
+  - Implemented classification logic in src/utils/categorization.py
+  - Added category field to account objects in JSON output
+  - Created dedicated UI components for category analysis
+  - Added interactive visualizations for category breakdown
+  - Created tests to verify categorization
+
 ## Pending Tasks
 
 ### High Priority
-
-- [ ] Add account categorization system
-  - Create category mapping based on account names and codes
-  - Implement classification logic
-  - Add category field to account objects in JSON output
-  - Update tests to verify categorization
 
 - [ ] Calculate financial ratios and metrics
   - Implement gross profit margin calculation
@@ -66,6 +64,18 @@
   - Provide clear error messages
   - Add validation tests
 
+- [ ] Enhance dashboard UI and UX
+  - Improve color scheme consistency (use a professional financial palette)
+  - Fix gauge chart display issues (text overlapping in metrics)
+  - Add proper error handling for negative values in visualizations
+  - Implement responsive layout for different screen sizes
+  - Add loading states and progress indicators
+  - Improve typography and spacing consistency
+  - Add tooltips for better metric explanations
+  - Enhance data tables with sorting and filtering capabilities
+  - Fix alignment issues in financial summary tables
+  - Add print/PDF export functionality
+
 ### Medium Priority
 
 - [ ] Add time series support
@@ -78,6 +88,14 @@
   - Create comprehensive README
   - Add usage examples
   - Document API and data structures
+  
+- [ ] Enhance dashboard visualizations
+  - Add interactive drilldown capabilities to charts
+  - Implement year-over-year comparison charts
+  - Create benchmark comparison feature (industry standards)
+  - Add forecast projections based on historical data
+  - Improve chart legends and annotations
+  - Add conditional formatting to highlight critical metrics
 
 ### Low Priority
 
@@ -100,6 +118,11 @@
 
 - [x] Ensure proper calculation of totals when not explicitly found in Excel file
 - [x] Handle negative values properly in calculations
+- [x] **2025-04-29**: Implement comprehensive logging system
+  - Created centralized logger module in src/utils/logger.py
+  - Added detailed logging throughout the categorization process
+  - Implemented error handling with descriptive error messages
+  - Added logging for debugging and troubleshooting
 - [ ] Fix issue with "Cost of Sales" appearing in Trading Income section
 
 ## Notes

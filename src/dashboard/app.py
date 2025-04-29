@@ -29,6 +29,7 @@ from src.dashboard.components.ui import (
     render_export_options,
     render_insights
 )
+from src.dashboard.components.category_ui import render_category_analysis
 
 # Set page configuration
 st.set_page_config(
@@ -89,6 +90,7 @@ def main():
             ["Pie Chart", "Treemap", "Bar Chart"],
             index=0
         )
+        show_categories = st.checkbox("Show category analysis", value=True)
         show_insights = st.checkbox("Show financial insights", value=True)
         
         st.markdown("---")
@@ -120,7 +122,7 @@ def main():
                     json.dump(result, f, indent=2)
                 
                 # Display the analysis
-                display_analysis(result, show_accounts, chart_type, show_insights)
+                display_analysis(result, show_accounts, chart_type, show_categories, show_insights)
             except Exception as e:
                 st.error(f"Error analyzing the file: {str(e)}")
                 st.error("Please make sure the file is a valid Profit & Loss report.")
@@ -138,7 +140,7 @@ def main():
                  caption="Upload a file to see your actual data analysis")
 
 
-def display_analysis(data, show_accounts, chart_type, show_insights):
+def display_analysis(data, show_accounts, chart_type, show_categories, show_insights):
     """
     Display the profit and loss analysis with visualizations.
     
@@ -146,6 +148,7 @@ def display_analysis(data, show_accounts, chart_type, show_insights):
         data: The profit and loss data dictionary.
         show_accounts: Whether to show detailed account information.
         chart_type: Type of chart to use for expense breakdown.
+        show_categories: Whether to show category analysis.
         show_insights: Whether to show financial insights.
     """
     # Company info section
@@ -156,6 +159,10 @@ def display_analysis(data, show_accounts, chart_type, show_insights):
     
     # Financial summary section
     render_financial_summary(data, chart_type)
+    
+    # Category analysis section (optional)
+    if show_categories:
+        render_category_analysis(data)
     
     # Financial insights section (optional)
     if show_insights:

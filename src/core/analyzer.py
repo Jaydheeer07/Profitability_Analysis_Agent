@@ -9,7 +9,15 @@ import pandas as pd
 import json
 import os
 import re
+import traceback
 from datetime import datetime
+
+# Import account categorization and logger
+from src.utils.categorization import add_categories_to_accounts
+from src.utils.logger import app_logger
+
+# Configure module-specific logger
+logger = app_logger.getChild('analyzer')
 
 
 def extract_company_and_period(df):
@@ -222,17 +230,29 @@ def analyze_profit_loss(file_path):
     Returns:
         dict: Structured profit and loss data.
     """
-    # Read the Excel file
-    df = pd.read_excel(file_path)
+    logger.info(f"Analyzing profit and loss report: {file_path}")
     
-    # Extract company name and period
-    company_name, period = extract_company_and_period(df)
-    
-    # Identify basis type (Accrual or Cash)
-    basis_type = identify_basis_type(df)
-    
-    # Find section boundaries
-    sections = find_section_boundaries(df)
+    try:
+        # Read the Excel file
+        logger.debug(f"Reading Excel file: {file_path}")
+        df = pd.read_excel(file_path)
+        logger.debug(f"Excel file read successfully, shape: {df.shape}")
+        
+        # Extract company name and period
+        company_name, period = extract_company_and_period(df)
+        logger.info(f"Extracted company: {company_name}, period: {period}")
+        
+        # Identify basis type (Accrual or Cash)
+        basis_type = identify_basis_type(df)
+        logger.info(f"Identified basis type: {basis_type}")
+        
+        # Find section boundaries
+        sections = find_section_boundaries(df)
+        logger.info(f"Found section boundaries: {sections}")
+    except Exception as e:
+        logger.error(f"Error during initial analysis of {file_path}: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise
     
     # Create result structure
     result = {
@@ -347,4 +367,16 @@ def analyze_profit_loss(file_path):
         else:
             result["sections"]["netProfit"] = net_profit_extracted
     
+    # Add categories to accounts
+    try:
+        logger.info("Adding categories to accounts")
+        result = add_categories_to_accounts(result)
+        logger.info("Categories added successfully")
+    except Exception as e:
+        logger.error(f"Error adding categories to accounts: {str(e)}")
+        logger.error(traceback.format_exc())
+        # Continue without categories rather than failing completely
+        logger.warning("Continuing without account categorization")
+    
+    logger.info("Analysis completed successfully")
     return result

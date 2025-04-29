@@ -14,6 +14,7 @@ from typing import Dict, List, Any, Optional
 
 # These imports will be updated after all files are moved
 from src.dashboard.utils import calculate_financial_ratios, get_top_accounts, format_currency
+from src.utils.categorization import get_accounts_by_category, get_category_totals
 from src.dashboard.visualizations.charts import (
     create_profit_breakdown_chart,
     create_expense_breakdown_chart,
@@ -123,6 +124,121 @@ def render_financial_summary(data: Dict[str, Any], chart_type: str) -> None:
         st.plotly_chart(fig, use_container_width=True)
 
 
+def render_category_analysis(data: Dict[str, Any]) -> None:
+    """
+    Render category-based analysis of accounts.
+    
+    Args:
+        data: The profit and loss data dictionary.
+    """
+    st.markdown("<div class='section-header'>Category Analysis</div>", unsafe_allow_html=True)
+    
+    # Get category totals for each section
+    tabs = st.tabs(["All Categories", "Income Categories", "Cost Categories", "Expense Categories"])
+    
+    with tabs[0]:
+        # All categories across sections
+        category_totals = get_category_totals(data)
+        
+        if category_totals:
+            # Create DataFrame for display
+            df = pd.DataFrame({
+                'Category': list(category_totals.keys()),
+                'Total': list(category_totals.values())
+            })
+            
+            # Sort by absolute value
+            df['AbsTotal'] = df['Total'].abs()
+            df = df.sort_values('AbsTotal', ascending=False).drop('AbsTotal', axis=1)
+            
+            # Format totals
+            df['Total'] = df['Total'].apply(format_currency)
+            
+            # Display as table
+            st.dataframe(df, use_container_width=True)
+            
+            # Create pie chart
+            fig = px.pie(
+                df, 
+                names='Category', 
+                values=df.index,  # Using index as placeholder since we can't use formatted currency
+                title='Distribution by Category',
+                hole=0.4
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("No category data available.")
+    
+    with tabs[1]:
+        # Income categories
+        income_categories = get_category_totals(data, 'tradingIncome')
+        
+        if income_categories:
+            # Create DataFrame for display
+            df = pd.DataFrame({
+                'Category': list(income_categories.keys()),
+                'Total': list(income_categories.values())
+            })
+            
+            # Sort by absolute value
+            df['AbsTotal'] = df['Total'].abs()
+            df = df.sort_values('AbsTotal', ascending=False).drop('AbsTotal', axis=1)
+            
+            # Format totals
+            df['Total'] = df['Total'].apply(format_currency)
+            
+            # Display as table
+            st.dataframe(df, use_container_width=True)
+        else:
+            st.info("No income category data available.")
+    
+    with tabs[2]:
+        # Cost categories
+        cost_categories = get_category_totals(data, 'costOfSales')
+        
+        if cost_categories:
+            # Create DataFrame for display
+            df = pd.DataFrame({
+                'Category': list(cost_categories.keys()),
+                'Total': list(cost_categories.values())
+            })
+            
+            # Sort by absolute value
+            df['AbsTotal'] = df['Total'].abs()
+            df = df.sort_values('AbsTotal', ascending=False).drop('AbsTotal', axis=1)
+            
+            # Format totals
+            df['Total'] = df['Total'].apply(format_currency)
+            
+            # Display as table
+            st.dataframe(df, use_container_width=True)
+        else:
+            st.info("No cost category data available.")
+    
+    with tabs[3]:
+        # Expense categories
+        expense_categories = get_category_totals(data, 'operatingExpenses')
+        
+        if expense_categories:
+            # Create DataFrame for display
+            df = pd.DataFrame({
+                'Category': list(expense_categories.keys()),
+                'Total': list(expense_categories.values())
+            })
+            
+            # Sort by absolute value
+            df['AbsTotal'] = df['Total'].abs()
+            df = df.sort_values('AbsTotal', ascending=False).drop('AbsTotal', axis=1)
+            
+            # Format totals
+            df['Total'] = df['Total'].apply(format_currency)
+            
+            # Display as table
+            st.dataframe(df, use_container_width=True)
+        else:
+            st.info("No expense category data available.")
+
+
 def render_detailed_sections(data: Dict[str, Any]) -> None:
     """
     Render detailed sections with account-level information.
@@ -156,7 +272,8 @@ def render_detailed_sections(data: Dict[str, Any]) -> None:
                     'name': 'Account Name',
                     'code': 'Account Code',
                     'value': 'Amount',
-                    'percentage': 'Percentage'
+                    'percentage': 'Percentage',
+                    'category': 'Category'
                 })
                 
                 # Display the data
