@@ -10,6 +10,9 @@ import json
 from typing import Dict, Any, Optional
 from datetime import datetime
 
+# Import centralized logger
+from src.utils.logger import app_logger as logger
+
 
 def save_json_file(data: Dict[str, Any], file_path: str) -> bool:
     """
@@ -27,7 +30,7 @@ def save_json_file(data: Dict[str, Any], file_path: str) -> bool:
             json.dump(data, f, indent=2)
         return True
     except Exception as e:
-        print(f"Error saving JSON file: {str(e)}")
+        logger.error(f"Error saving JSON file: {str(e)}")
         return False
 
 
@@ -48,7 +51,7 @@ def load_json_file(file_path: str) -> Optional[Dict[str, Any]]:
         with open(file_path, 'r') as f:
             return json.load(f)
     except Exception as e:
-        print(f"Error loading JSON file: {str(e)}")
+        logger.error(f"Error loading JSON file: {str(e)}")
         return None
 
 

@@ -18,7 +18,7 @@ A Python-based tool for analyzing profit and loss reports from Excel files, conv
 - View key financial metrics and KPIs (gross margin, net margin, expense ratios)
 - Visualize profit breakdown and expense distribution
 - Explore detailed account information in an organized format
-- Generate financial insights and recommendations
+- Generate financial insights and recommendations (rule-based and AI-powered)
 - Export analysis results in JSON or CSV format
 
 ## Installation
@@ -33,6 +33,14 @@ cd Profitability_Analysis_Agent
 ```bash
 pip install -r requirements.txt
 ```
+
+3. Set up OpenAI API key (for AI-powered insights):
+   - Create a `.env` file in the root directory based on `.env.example`
+   - Add your OpenAI API key to the `.env` file:
+   ```
+   OPENAI_API_KEY=your-api-key-here
+   OPENAI_MODEL_NAME=gpt-4o-mini  # or another supported model
+   ```
 
 ## Usage
 
@@ -66,6 +74,32 @@ result = analyze_profit_loss("path/to/your/excel_file.xlsx")
 import json
 print(json.dumps(result, indent=2))
 ```
+
+## AI-Powered Financial Insights
+
+The dashboard now features AI-powered financial insights and recommendations using OpenAI's language models. This feature:
+
+- Analyzes your financial data to generate personalized insights
+- Provides actionable recommendations based on your specific financial situation
+- Highlights strengths, weaknesses, and opportunities in your financial performance
+- Offers detailed explanations with expected impact and implementation difficulty
+
+### Using AI Insights
+
+1. Upload your P&L report in the dashboard
+2. Ensure "Show financial insights" is checked in the options
+3. Toggle "Enable AI-powered financial insights" to use the LLM for analysis
+4. View the generated insights and recommendations
+5. Provide feedback on the quality of insights using the buttons provided
+
+### Privacy Considerations
+
+When using the AI-powered insights feature:
+
+- Your financial data is sent to OpenAI's API for analysis
+- No data is permanently stored on OpenAI's servers
+- For maximum privacy, you can disable the AI-powered insights and use the built-in rule-based insights instead
+- All API calls are made with your own API key, giving you full control over usage and billing
 
 ## Output Format
 

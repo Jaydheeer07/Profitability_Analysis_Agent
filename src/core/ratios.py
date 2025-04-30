@@ -7,9 +7,9 @@ and metrics for profit and loss analysis.
 
 from typing import Optional, Dict, Any
 from pydantic import BaseModel, Field, validator
-import logging
 
-logger = logging.getLogger("ratios")
+# Import centralized logger
+from src.utils.logger import app_logger as logger
 
 class FinancialStatement(BaseModel):
     revenue: float = Field(..., description="Total revenue (sales)")

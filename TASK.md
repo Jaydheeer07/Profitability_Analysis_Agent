@@ -65,7 +65,7 @@
 
 ### High Priority
 
-- [ ] Integrate LLM for financial insights and recommendations
+- [x] **2025-04-30**: Integrate LLM for financial insights and recommendations
   - Use an LLM (e.g., OpenAI, Azure, or open-source) to generate personalized financial insights and actionable recommendations in the dashboard
   - Replace or supplement hardcoded rule-based insights in `render_insights`
   - Design prompts using structured financial data and ratios
@@ -73,6 +73,43 @@
   - Cache/store LLM responses for repeat analysis
   - Add unit/integration tests for this feature
   - Update README with usage, API key setup, and privacy notes
+  
+  **Implementation Steps:**
+  - [x] **Step 1: Create LLM Service Module**
+    - Created `src/utils/llm_service.py` to handle OpenAI API interactions
+    - Implemented error handling and retry mechanisms
+    - Added comprehensive logging for debugging and monitoring
+    - Created Pydantic models for request/response validation
+  
+  - [x] **Step 2: Design Effective Prompts**
+    - Created structured prompts that leverage financial data and ratios
+    - Designed different prompt templates for different insight types (profitability, expenses, etc.)
+    - Implemented a system to dynamically generate prompts based on available data
+    - Added context about the company, industry benchmarks, and financial metrics
+  
+  - [x] **Step 3: Integrate with Dashboard**
+    - Modified `render_insights` function in `ui.py` to use the LLM service
+    - Created a toggle mechanism to switch between LLM and rule-based insights
+    - Implemented a fallback mechanism if LLM service fails
+    - Added visual distinction between LLM and rule-based insights
+  
+  - [x] **Step 4: Add Caching and Performance Optimization**
+    - Implemented a caching system to store LLM responses
+    - Used a hash of the financial data as a cache key
+    - Set appropriate TTL (time-to-live) for cached responses
+    - Added mechanisms to refresh cache when needed
+  
+  - [x] **Step 5: Enhance UI for LLM Insights**
+    - Added loading indicators for LLM processing
+    - Implemented a feedback mechanism for users to rate insights
+    - Created expandable sections for detailed recommendations
+    - Added tooltips explaining the basis for each insight
+  
+  - [x] **Step 6: Testing and Documentation**
+    - Created unit tests for the LLM service
+    - Implemented integration tests for the entire insight generation flow
+    - Added validation for LLM responses to ensure quality and relevance
+    - Created documentation for API key setup and privacy considerations
 
 - [ ] Enhance dashboard UI and UX
   - Improve color scheme consistency (use a professional financial palette)

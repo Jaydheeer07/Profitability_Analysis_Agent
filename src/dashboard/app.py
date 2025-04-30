@@ -112,6 +112,12 @@ def main():
         show_categories = st.checkbox("Show category analysis", value=True)
         show_insights = st.checkbox("Show financial insights", value=True)
         
+        # Add option for using LLM-powered insights
+        use_llm = False
+        if show_insights:
+            use_llm = st.checkbox("Enable AI-powered financial insights", value=True, 
+                                help="Uses OpenAI to generate personalized financial insights and recommendations.")
+        
         st.markdown("---")
         st.markdown("### About")
         st.markdown("""
@@ -160,7 +166,7 @@ def main():
                     json.dump(result, f, indent=2)
                 
                 # Display the analysis
-                display_analysis(result, show_accounts, chart_type, show_categories, show_insights)
+                display_analysis(result, show_accounts, chart_type, show_categories, show_insights, use_llm)
                 
             except ExcelFileValidationError as e:
                 st.error(f"❌ **Validation Error:** {str(e)}")
@@ -197,7 +203,7 @@ def main():
                  caption="Upload a file to see your actual data analysis")
 
 
-def display_analysis(data, show_accounts, chart_type, show_categories, show_insights):
+def display_analysis(data, show_accounts, chart_type, show_categories, show_insights, use_llm=True):
     """
     Display the profit and loss analysis with visualizations.
     
@@ -207,6 +213,7 @@ def display_analysis(data, show_accounts, chart_type, show_categories, show_insi
         chart_type: Type of chart to use for expense breakdown.
         show_categories: Whether to show category analysis.
         show_insights: Whether to show financial insights.
+        use_llm: Whether to use LLM for generating insights.
     """
     # Company info section
     render_header(data)
@@ -223,7 +230,7 @@ def display_analysis(data, show_accounts, chart_type, show_categories, show_insi
     
     # Financial insights section (optional)
     if show_insights:
-        render_insights(data)
+        render_insights(data, use_llm=use_llm)
     
     # Detailed sections (optional)
     if show_accounts:

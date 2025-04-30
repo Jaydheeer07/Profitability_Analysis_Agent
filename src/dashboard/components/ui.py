@@ -409,13 +409,17 @@ def render_export_options(data: Dict[str, Any]) -> None:
             st.button("Download CSV", disabled=True)
 
 
-def render_insights(data: Dict[str, Any]) -> None:
+def render_insights(data: Dict[str, Any], use_llm: bool = True) -> None:
     """
     Render financial insights based on the data.
     
     Args:
         data: The profit and loss data dictionary.
+        use_llm: Whether to use the LLM for generating insights.
     """
+    from src.utils.insights_helper import generate_llm_insights, format_insight_for_display, format_recommendation_for_display
+    import time
+    
     st.markdown("<div class='section-header'>Financial Insights</div>", unsafe_allow_html=True)
     
     with st.expander("Financial Insights & Recommendations", expanded=True):
@@ -425,7 +429,59 @@ def render_insights(data: Dict[str, Any]) -> None:
         # Calculate financial ratios
         ratios = calculate_financial_ratios(data)
         
-        # Generate insights based on the data
+        # Toggle for LLM vs. rule-based insights
+        col1, col2 = st.columns([3, 1])
+        with col2:
+            use_llm_toggle = st.checkbox("Use AI-powered insights", value=use_llm)
+        
+        # Display a loading indicator while generating LLM insights
+        if use_llm_toggle:
+            with st.spinner("Generating AI-powered financial insights..."):
+                llm_response = generate_llm_insights(data, use_llm=use_llm_toggle)
+                
+                if llm_response:
+                    # Display LLM-generated insights
+                    st.markdown("### Key Insights")
+                    st.markdown(f"*AI-powered analysis based on your financial data*")
+                    
+                    # Display executive summary
+                    st.info(llm_response.summary)
+                    
+                    # Display insights
+                    for insight in llm_response.insights:
+                        st.markdown(format_insight_for_display(insight.dict()))
+                    
+                    # Display recommendations
+                    st.markdown("### Recommendations")
+                    for recommendation in llm_response.recommendations:
+                        st.markdown(format_recommendation_for_display(recommendation.dict()))
+                    
+                    # Display generation metadata
+                    st.markdown("---")
+                    st.caption(f"Insights generated at {llm_response.generated_at.strftime('%Y-%m-%d %H:%M')} using {llm_response.llm_model}")
+                    
+                    # Add feedback mechanism
+                    col1, col2, col3 = st.columns([1, 1, 1])
+                    with col1:
+                        if st.button("👍 Helpful"):
+                            st.success("Thank you for your feedback!")
+                    with col2:
+                        if st.button("👎 Not helpful"):
+                            st.success("Thank you for your feedback!")
+                    with col3:
+                        if st.button("🔄 Regenerate"):
+                            st.experimental_rerun()
+                    
+                    return  # Exit function after displaying LLM insights
+                else:
+                    st.error("Failed to generate AI-powered insights. Falling back to rule-based insights.")
+        
+        # If LLM is not used or failed, use rule-based insights
+        st.markdown("### Key Insights")
+        if not use_llm_toggle:
+            st.markdown("*Using rule-based analysis*")
+        
+        # Generate rule-based insights
         insights = []
         
         # Gross profit insights
