@@ -8,6 +8,7 @@ and visualization utilities used by the Streamlit dashboard.
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Any, Tuple, Optional, Union
+from src.core.ratios import calculate_financial_metrics
 
 
 def calculate_financial_ratios(data: Dict[str, Any]) -> Dict[str, float]:
@@ -20,32 +21,18 @@ def calculate_financial_ratios(data: Dict[str, Any]) -> Dict[str, float]:
     Returns:
         Dictionary containing calculated financial ratios.
     """
-    sections = data.get('sections', {})
-    trading_income = sections.get('tradingIncome', {}).get('total', 0)
-    cost_of_sales = sections.get('costOfSales', {}).get('total', 0)
-    gross_profit = sections.get('grossProfit', 0)
-    operating_expenses = sections.get('operatingExpenses', {}).get('total', 0)
-    net_profit = sections.get('netProfit', 0)
+    # Use the new comprehensive metrics calculation function from ratios.py
+    metrics = calculate_financial_metrics(data)
     
-    # Initialize ratios
+    # For backward compatibility, map the new metric names to the old ones
+    # and ensure all expected keys are present
     ratios = {
-        'gross_margin': 0,
-        'net_margin': 0,
-        'expense_ratio': 0,
-        'cogs_ratio': 0,
-        'operating_profit_margin': 0
+        'gross_margin': metrics.get('gross_margin', 0),
+        'net_margin': metrics.get('net_margin', 0),
+        'expense_ratio': metrics.get('expense_ratio', 0),
+        'cogs_ratio': metrics.get('cogs_ratio', 0),
+        'operating_profit_margin': metrics.get('operating_margin', 0)
     }
-    
-    # Calculate ratios if trading income is not zero
-    if trading_income and trading_income != 0:
-        ratios['gross_margin'] = (gross_profit / trading_income) * 100
-        ratios['net_margin'] = (net_profit / trading_income) * 100
-        ratios['expense_ratio'] = (operating_expenses / trading_income) * 100
-        ratios['cogs_ratio'] = (cost_of_sales / trading_income) * 100
-        
-        # Operating profit margin (if we can calculate it)
-        operating_profit = gross_profit - operating_expenses
-        ratios['operating_profit_margin'] = (operating_profit / trading_income) * 100
     
     return ratios
 

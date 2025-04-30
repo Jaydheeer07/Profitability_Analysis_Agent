@@ -11,10 +11,12 @@ import os
 import re
 import traceback
 from datetime import datetime
+from typing import Dict, List, Tuple, Optional, Any
 
-# Import account categorization and logger
+# Import account categorization, validation, and logger
 from src.utils.categorization import add_categories_to_accounts
 from src.utils.logger import app_logger
+from src.core.validation import validate_excel_file, ExcelFileValidationError
 
 # Configure module-specific logger
 logger = app_logger.getChild('analyzer')
@@ -220,7 +222,7 @@ def extract_accounts(df, start_row, end_row):
     return accounts, total_value
 
 
-def analyze_profit_loss(file_path):
+def analyze_profit_loss(file_path: str) -> Dict[str, Any]:
     """
     Analyze a profit and loss Excel report and extract structured data.
     
@@ -229,8 +231,25 @@ def analyze_profit_loss(file_path):
         
     Returns:
         dict: Structured profit and loss data.
+        
+    Raises:
+        ExcelFileValidationError: If the file fails validation
+        ValueError: If the file cannot be processed
+        Exception: For other unexpected errors
     """
     logger.info(f"Analyzing profit and loss report: {file_path}")
+    
+    # Validate the Excel file before processing
+    validation_result = validate_excel_file(file_path)
+    if not validation_result.is_valid:
+        error_msg = "Excel file validation failed: " + "; ".join(validation_result.errors)
+        logger.error(error_msg)
+        raise ExcelFileValidationError(error_msg)
+    
+    # Log any warnings
+    if validation_result.warnings:
+        for warning in validation_result.warnings:
+            logger.warning(f"Validation warning: {warning}")
     
     try:
         # Read the Excel file

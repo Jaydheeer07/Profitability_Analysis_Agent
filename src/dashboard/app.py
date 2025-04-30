@@ -10,10 +10,12 @@ import pandas as pd
 import json
 import os
 import sys
+import traceback
 from pathlib import Path
 
-# Import core analyzer
+# Import core analyzer and validation
 from src.core.analyzer import analyze_profit_loss
+from src.core.validation import validate_excel_file, ExcelFileValidationError
 
 # Import dashboard modules
 from src.dashboard.utils import calculate_financial_ratios, get_top_accounts
@@ -82,6 +84,23 @@ def main():
         st.markdown("### Upload P&L Report")
         uploaded_file = st.file_uploader("Choose an Excel file", type=["xlsx", "xls"])
         
+        # Add help text about expected file format
+        with st.expander("ℹ️ About P&L Reports"):
+            st.markdown("""
+            **Expected File Format:**
+            - Excel file (.xlsx or .xls)
+            - Contains income/revenue section
+            - Contains expense section
+            - Contains profit calculations
+            - Has numeric financial data
+            
+            **Common Issues:**
+            - Missing section headers
+            - Too many empty cells
+            - No financial data
+            - Incorrect file format
+            """)
+        
         st.markdown("---")
         st.markdown("### Options")
         show_accounts = st.checkbox("Show detailed accounts", value=True)
@@ -112,10 +131,29 @@ def main():
         with open(temp_file_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
         
-        # Analyze the profit and loss report
-        with st.spinner("Analyzing profit and loss report..."):
+        # Validate and analyze the profit and loss report
+        with st.spinner("Validating and analyzing profit and loss report..."):
             try:
+                # First validate the file
+                validation_result = validate_excel_file(temp_file_path)
+                
+                # Show warnings if any
+                if validation_result.warnings:
+                    st.warning("⚠️ **Validation Warnings:**")
+                    for warning in validation_result.warnings:
+                        st.warning(f"- {warning}")
+                
+                # If validation fails, show detailed errors
+                if not validation_result.is_valid:
+                    st.error("❌ **File Validation Failed**")
+                    for error in validation_result.errors:
+                        st.error(f"- {error}")
+                    st.info("Please upload a valid Profit & Loss Excel report. The file should contain financial data with income, expenses, and profit sections.")
+                    return
+                
+                # If validation passes, analyze the file
                 result = analyze_profit_loss(temp_file_path)
+                
                 # Save the result to a JSON file
                 output_path = os.path.join(os.getcwd(), "profit_loss_analysis.json")
                 with open(output_path, "w") as f:
@@ -123,9 +161,15 @@ def main():
                 
                 # Display the analysis
                 display_analysis(result, show_accounts, chart_type, show_categories, show_insights)
+                
+            except ExcelFileValidationError as e:
+                st.error(f"❌ **Validation Error:** {str(e)}")
+                st.info("Please upload a valid Profit & Loss Excel report. The file should contain financial data with income, expenses, and profit sections.")
             except Exception as e:
-                st.error(f"Error analyzing the file: {str(e)}")
-                st.error("Please make sure the file is a valid Profit & Loss report.")
+                st.error(f"❌ **Error analyzing the file:** {str(e)}")
+                st.error("An unexpected error occurred during analysis.")
+                st.code(traceback.format_exc(), language="python")
+                st.info("If this error persists, please check the log files or contact support.")
         
         # Clean up temporary file
         if os.path.exists(temp_file_path):
@@ -133,6 +177,19 @@ def main():
     else:
         # Display sample data or instructions
         st.info("👈 Please upload a Profit & Loss Excel file to get started.")
+        
+        # Instructions for valid P&L reports
+        st.markdown("### How to Prepare Your P&L Report")
+        st.markdown("""
+        For best results, ensure your Profit & Loss report includes:
+        
+        1. **Clear Section Headers** - Income/Revenue, Expenses, Profit sections should be clearly labeled
+        2. **Account Details** - Individual line items with account names and values
+        3. **Financial Totals** - Section totals and profit calculations
+        4. **Consistent Format** - Standard Excel format without merged cells or complex formatting
+        
+        The dashboard will automatically validate your file before processing.
+        """)
         
         # Sample image or placeholder
         st.markdown("### Sample Dashboard Preview")

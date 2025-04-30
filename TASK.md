@@ -1,7 +1,5 @@
 # Profitability Analysis Agent - Task List
 
-
-
 ## Completed Tasks
 
 - [x] **2025-04-28**: Create Excel parser for profit and loss reports (analyze_profit_loss.py)
@@ -47,22 +45,34 @@
   - Added interactive visualizations for category breakdown
   - Created tests to verify categorization
 
+- [x] **2025-04-30**: Calculate financial ratios and metrics
+  - Implemented gross profit margin calculation
+  - Implemented net profit margin calculation
+  - Implemented operating expense ratio calculation
+  - Added metrics section to JSON output
+  - Created comprehensive tests for financial calculations
+  - Added additional ratios (ROE, ROA, current ratio, quick ratio)
+  - Integrated with analyzer output format
+
+- [x] **2025-04-30**: Implement data validation
+  - Added input validation for Excel files using Pydantic models
+  - Implemented comprehensive validation for file structure and content
+  - Added clear error messages and warnings in the UI
+  - Created validation tests with proper error handling
+  - Integrated validation into the analyzer workflow
+
 ## Pending Tasks
 
 ### High Priority
 
-- [ ] Calculate financial ratios and metrics
-  - Implement gross profit margin calculation
-  - Implement net profit margin calculation
-  - Implement operating expense ratio calculation
-  - Add metrics section to JSON output
-  - Create tests for financial calculations
-
-- [ ] Implement data validation
-  - Add input validation for Excel files
-  - Handle malformed or unexpected formats
-  - Provide clear error messages
-  - Add validation tests
+- [ ] Integrate LLM for financial insights and recommendations
+  - Use an LLM (e.g., OpenAI, Azure, or open-source) to generate personalized financial insights and actionable recommendations in the dashboard
+  - Replace or supplement hardcoded rule-based insights in `render_insights`
+  - Design prompts using structured financial data and ratios
+  - Add configuration to toggle between LLM and static logic
+  - Cache/store LLM responses for repeat analysis
+  - Add unit/integration tests for this feature
+  - Update README with usage, API key setup, and privacy notes
 
 - [ ] Enhance dashboard UI and UX
   - Improve color scheme consistency (use a professional financial palette)
