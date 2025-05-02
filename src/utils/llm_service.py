@@ -16,6 +16,10 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional, Union
 from dotenv import load_dotenv
 
+# Import Pydantic for data validation
+import openai
+from pydantic import BaseModel, Field, ConfigDict, field_validator
+
 # Import centralized logger
 from src.utils.logger import app_logger as logger
 
@@ -39,7 +43,8 @@ class FinancialInsightRequest(BaseModel):
     period: str = Field(..., description="Financial period (e.g., 'Q1 2025')")
     financial_data: Dict[str, Any] = Field(..., description="Financial data and metrics")
     
-    @validator('financial_data')
+    @field_validator('financial_data')
+    @classmethod
     def validate_financial_data(cls, v):
         """Validate that the financial data contains required fields."""
         required_fields = ['sections', 'metrics']

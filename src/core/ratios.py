@@ -6,7 +6,7 @@ and metrics for profit and loss analysis.
 """
 
 from typing import Optional, Dict, Any
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 # Import centralized logger
 from src.utils.logger import app_logger as logger
@@ -24,7 +24,8 @@ class FinancialStatement(BaseModel):
     inventory: Optional[float] = Field(None, description="Inventory")
     accounts_receivable: Optional[float] = Field(None, description="Accounts receivable")
 
-    @validator('*', pre=True)
+    @field_validator('*', mode='before')
+    @classmethod
     def none_to_zero(cls, v):
         return v if v is not None else 0.0
 

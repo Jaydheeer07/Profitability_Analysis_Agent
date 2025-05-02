@@ -9,7 +9,7 @@ import pandas as pd
 import os
 import re
 from typing import Dict, List, Tuple, Optional, Union, Any
-from pydantic import BaseModel, Field, validator, ValidationError
+from pydantic import BaseModel, Field, field_validator, ValidationError
 
 from src.utils.logger import app_logger
 
@@ -53,7 +53,8 @@ class ProfitLossExcelValidator(BaseModel):
         description="Keywords to identify essential P&L sections"
     )
     
-    @validator('file_path')
+    @field_validator('file_path')
+    @classmethod
     def file_must_exist(cls, v):
         """Validate that the file exists and is an Excel file."""
         if not os.path.exists(v):
